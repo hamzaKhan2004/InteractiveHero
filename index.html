@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Grid Thumbnail Hero</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      @font-face {
+        font-family: rr;
+        src: url(FraktionMono-Regular.ttf);
+      }
+      :root {
+        --primary: #0b0b0b;
+        --secondary: #e6e6e6;
+        --alternate: #c01a1a;
+        --padding-container: 3.2rem;
+      }
+      html {
+        font-size: max(100vw/1920 * 10);
+      }
+      body {
+        font-family: rr;
+        background-color: var(--primary);
+        color: var(--secondary);
+      }
+      h1 {
+        font-size: 30rem;
+        text-transform: uppercase;
+        line-height: 1;
+        padding-top: 20px;
+        font-weight: 900;
+        color: #fff;
+        mix-blend-mode: exclusion;
+      }
+      p {
+        font-size: 5.8rem;
+        line-height: 1.2;
+      }
+      span {
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      .home {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .home_wrapper {
+        padding: var(--padding-container);
+        height: inherit;
+      }
+      .home_heading {
+        position: absolute;
+        left: var(--padding-container);
+        bottom: 0;
+        width: 100%;
+        z-index: 100;
+        display: inline-flex;
+        align-items: center;
+        gap: 1.6rem;
+      }
+      .home_heading_text {
+        display: inline-flex;
+        overflow: hidden;
+      }
+      .home_heading_circle {
+        position: relative;
+        width: 35rem;
+        height: 35rem;
+        border-radius: 50%;
+        background-color: var(--alternate);
+      }
+      .home_heading_circle::after {
+        content: " →";
+        font-size: 10rem;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--secondary);
+      }
+      .home_thumbnail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: inherit;
+        gap: 1.6rem;
+      }
+      .home_thumbnail_row_container {
+        display: flex;
+        gap: 1.6rem;
+        width: fit-content;
+        perspective: 300px;
+      }
+      .home_thumbnail_row_figure {
+        position: relative;
+        width: 48rem;
+        height: calc((100vh / 3) - var(--padding-container));
+        overflow: hidden;
+        border-radius: 1rem;
+      }
+      .home_thumbnail_row_img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      @media screen and (max-width: 768px) {
+        html {
+          font-size: max(100vw/768 * 10);
+        }
+
+        h1 {
+          font-size: 25rem;
+          line-height: 0.8;
+        }
+        .home_heading {
+          left: 0;
+          padding: 0 3.2rem;
+          display: flex;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .home_heading_text {
+          display: inline-flex;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        .home_heading_circle {
+          width: 16rem;
+          height: 16rem;
+          position: absolute;
+        }
+        .home_heading_circle::after {
+          font-size: 4rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="home">
+        <div class="home_wrapper">
+          <div class="home_heading">
+            <div class="home_heading_text">
+              <h1>C</h1>
+              <h1>R</h1>
+              <h1>E</h1>
+              <h1>A</h1>
+              <h1>T</h1>
+              <h1>O</h1>
+              <h1>R</h1>
+              <h1>S</h1>
+            </div>
+            <div class="home_heading_circle"></div>
+          </div>
+          <div class="home_thumbnail">
+            <div class="home_thumbnail_row"></div>
+            <div class="home_thumbnail_row"></div>
+            <div class="home_thumbnail_row"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      const uniqueImages = [
+        {
+          url: "https://images.unsplash.com/photo-1721297013604-c6e1dc5639e2?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 1,
+          id: 1,
+        },
+        {
+          url: "https://plus.unsplash.com/premium_photo-1721353413119-230abf059a1c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 1,
+          id: 2,
+        },
+        {
+          url: "https://plus.unsplash.com/premium_photo-1721405380977-d27241902a74?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 1,
+          id: 3,
+        },
+        {
+          url: "https://images.pexels.com/photos/5028927/pexels-photo-5028927.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          row: 1,
+          id: 4,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1565112092010-805f4a71be71?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDl8NnNNVmpUTFNrZVF8fGVufDB8fHx8fA%3D%3D",
+          row: 1,
+          id: 5,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+          row: 2,
+          id: 1,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1515767175197-2c7c3e3a3959?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 2,
+          id: 2,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1721212771618-64c3a8acb5c2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==",
+          row: 2,
+          id: 3,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+          row: 2,
+          id: 4,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1721479439539-9696b9bfd2e7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 2,
+          id: 5,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1529692776239-19cbd1334490?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 3,
+          id: 1,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+          row: 3,
+          id: 2,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1721491211708-52c35e5419af?q=80&w=2075&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 3,
+          id: 3,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+          row: 3,
+          id: 4,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1547177945-7db2efbecc5b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 3,
+          id: 5,
+        },
+        {
+          url: "https://images.pexels.com/photos/3408353/pexels-photo-3408353.jpeg?auto=compress&cs=tinysrgb&w=600",
+          row: 4,
+          id: 1,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1721423297705-f7da8f386dc4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 4,
+          id: 2,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1721397117112-d274be41d79d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 4,
+          id: 3,
+        },
+        {
+          url: "https://images.pexels.com/photos/547119/pexels-photo-547119.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          row: 4,
+          id: 4,
+        },
+        {
+          url: "https://images.unsplash.com/photo-1721804980240-4b8adc442fc4?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          row: 4,
+          id: 5,
+        },
+      ];
+      const loadContent = () => {
+        const title = document.querySelectorAll(".home_heading_text > h1"),
+          circle = document.querySelector(".home_heading_circle"),
+          Row = document.querySelectorAll(".home_thumbnail_row"),
+          figure = document.querySelectorAll(".home_thumbnail_row_figure"),
+          image = document.querySelectorAll(".home_thumbnail_row_img");
+
+        const state = {
+          rows: [],
+          targetX: 0,
+          currentX: 0,
+          lerp: 0.01,
+        };
+
+        const init = () => {
+          gsap.set(title, { yPercent: 100, rotate: 20, scale: 0 });
+          gsap.set(circle, { scale: 0 });
+          gsap.set(Row, { xPercent: -100 });
+          createRows();
+        };
+        const createRows = () => {
+          for (let i = 0; i < 3; i++) {
+            const row = document.createElement("div");
+            row.classList.add("home_thumbnail_row_container");
+            Row[i].appendChild(row);
+            state.rows.push(row);
+
+            for (let j = 0; j < 5; j++) {
+              const figure = document.createElement("figure");
+              figure.classList.add("home_thumbnail_row_figure");
+              row.appendChild(figure);
+
+              const img = document.createElement("img");
+              img.classList.add("home_thumbnail_row_img");
+              figure.appendChild(img);
+
+              for (let k = 0; k < uniqueImages.length; k++) {
+                if (
+                  uniqueImages[k].row === i + 1 &&
+                  uniqueImages[k].id === j + 1
+                ) {
+                  img.src = uniqueImages[k].url;
+                }
+              }
+            }
+          }
+          animteHome();
+        };
+        const animteHome = () => {
+          gsap
+            .timeline({ defaults: { duration: 0.9, ease: "power4.inOut" } })
+            .to(Row, {
+              duration: 2,
+              xPercent: 0,
+              stagger: 0.05,
+              onComplete: updateRows,
+            })
+            .to(title, {
+              yPercent: 0,
+              rotate: 0,
+              scale: 1,
+              stagger: 0.05,
+            })
+            .to(circle, { scale: 1 }, "<0.5");
+        };
+
+        const onMouseMove = (event) => {
+          state.targetX = (event.clientX / window.innerWidth - 0.5) * 2;
+        };
+        const updateRows = () => {
+          state.currentX = lerp(state.currentX, state.targetX, state.lerp);
+          Row[0].style.transform = `translate3d(${state.currentX * 25}px,0,0)`;
+          Row[1].style.transform = `translate3d(${state.currentX * 60}px,0,0)`;
+          Row[2].style.transform = `translate3d(${state.currentX * 30}px,0,0)`;
+          requestAnimationFrame(updateRows);
+        };
+        window.addEventListener("DOMContentLoaded", init);
+        window.addEventListener("mousemove", onMouseMove);
+        function lerp(p1, p2, t) {
+          return p1 + (p2 - p1) * t;
+        }
+      };
+      loadContent();
+    </script>
+  </body>
+</html>
